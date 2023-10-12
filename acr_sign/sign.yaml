@@ -1,0 +1,17 @@
+version: v1.1.0
+steps:
+  # Configure notation
+  - cmd: $Registry/notation-azure-kv-installer  # install notation-azure-kv plugin
+  - cmd: $Registry/notation plugin ls           # list all installed plugins
+  - cmd: >-                                     # add a signing key
+      $Registry/notation key add --plugin azure-kv --id {{.Values.SIGNING_KEY_ID}} --plugin-config self_signed=true --default akv-key
+  - cmd: $Registry/notation key ls              # list all keys
+
+  # Build and push a hello-world image for demo purpose
+  - cmd: bash -c "echo 'FROM hello-world' > Dockerfile"
+  - build: -t $Registry/demo/hello:latest .
+  - push:
+    - $Registry/demo/hello:latest
+
+  # Sign image
+  - cmd: $Registry/notation sign $Registry/demo/hello:latest # sign image
