@@ -8,5 +8,6 @@ RUN curl -Lo notation.tar.gz https://github.com/notaryproject/notation/releases/
 RUN tar xvzf notation.tar.gz
 
 FROM ubuntu
+RUN apt-get update && apt-get install -y ca-certificates libicu-dev
 COPY --from=build /Downloads/notation /usr/local/bin/notation
 ENTRYPOINT [ "notation" ]
